@@ -1,7 +1,21 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import SleepEntryForm from '../components/sleep/SleepEntryForm'
+import type { SleepEntryFormData } from '../components/sleep/SleepEntryForm'
 
 export default function NewSleepEntryPage() {
+  const navigate = useNavigate()
+
+  const handleSubmit = (data: SleepEntryFormData) => {
+    // TODO: API 연동 후 실제 저장 구현
+    console.log('Submit new entry:', data)
+    navigate('/sleep-entries')
+  }
+
+  const handleCancel = () => {
+    navigate('/sleep-entries')
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
@@ -11,9 +25,8 @@ export default function NewSleepEntryPage() {
         </Link>
       </div>
 
-      {/* TODO: 수면 기록 작성 폼 구현 */}
       <div className="bg-white rounded-lg shadow p-6">
-        <div className="text-center text-gray-500">수면 기록 작성 폼이 곧 구현될 예정입니다.</div>
+        <SleepEntryForm onSubmit={handleSubmit} onCancel={handleCancel} />
       </div>
     </div>
   )

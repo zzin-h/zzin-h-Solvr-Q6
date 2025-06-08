@@ -1,5 +1,6 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import Layout from './components/layout/Layout'
 import SleepEntryListPage from './pages/SleepEntryListPage'
 import NewSleepEntryPage from './pages/NewSleepEntryPage'
 import EditSleepEntryPage from './pages/EditSleepEntryPage'
@@ -7,7 +8,7 @@ import EditSleepEntryPage from './pages/EditSleepEntryPage'
 function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-gray-50">
+      <Layout>
         <Routes>
           {/* 루트 경로를 수면 기록 목록으로 리다이렉트 */}
           <Route path="/" element={<Navigate to="/sleep-entries" replace />} />
@@ -17,7 +18,7 @@ function App() {
           <Route path="/sleep-entries/new" element={<NewSleepEntryPage />} />
           <Route path="/sleep-entries/:id/edit" element={<EditSleepEntryPage />} />
         </Routes>
-      </div>
+      </Layout>
     </BrowserRouter>
   )
 }

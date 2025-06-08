@@ -1,8 +1,31 @@
 import React from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import SleepEntryForm from '../components/sleep/SleepEntryForm'
+import type { SleepEntryFormData } from '../components/sleep/SleepEntryForm'
+
+// 임시 데이터
+const MOCK_ENTRY = {
+  id: 1,
+  date: '2024-03-20',
+  sleepTime: '2024-03-20T23:00:00',
+  wakeTime: '2024-03-21T07:00:00',
+  quality: 4,
+  note: '편안한 수면'
+}
 
 export default function EditSleepEntryPage() {
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+
+  const handleSubmit = (data: SleepEntryFormData) => {
+    // TODO: API 연동 후 실제 수정 구현
+    console.log(`Update entry ${id}:`, data)
+    navigate('/sleep-entries')
+  }
+
+  const handleCancel = () => {
+    navigate('/sleep-entries')
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -13,11 +36,8 @@ export default function EditSleepEntryPage() {
         </Link>
       </div>
 
-      {/* TODO: 수면 기록 수정 폼 구현 */}
       <div className="bg-white rounded-lg shadow p-6">
-        <div className="text-center text-gray-500">
-          수면 기록 #{id} 수정 폼이 곧 구현될 예정입니다.
-        </div>
+        <SleepEntryForm initialData={MOCK_ENTRY} onSubmit={handleSubmit} onCancel={handleCancel} />
       </div>
     </div>
   )
