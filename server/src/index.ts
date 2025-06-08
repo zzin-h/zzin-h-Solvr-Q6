@@ -1,62 +1,81 @@
-import Fastify from 'fastify'
-import cors from '@fastify/cors'
-import env from './config/env'
-import { initializeDatabase, getDb } from './db'
-import runMigration from './db/migrate'
-import { createUserService } from './services/userService'
-import { createRoutes } from './routes'
-import { AppContext } from './types/context'
-import sleepEntriesRoutes from './routes/sleep-entries'
+import express from 'express'
+import cors from 'cors'
+import { PrismaClient } from '@prisma/client'
 
-// Fastify 인스턴스 생성
-const fastify = Fastify({
-  logger: {
-    level: env.LOG_LEVEL,
-    transport: {
-      target: 'pino-pretty',
-      options: {
-        translateTime: 'HH:MM:ss Z',
-        ignore: 'pid,hostname'
+const app = express()
+const prisma = new PrismaClient()
+const port = process.env.PORT || 3000
+
+app.use(cors())
+app.use(express.json())
+
+// 모든 수면 기록 조회
+app.get('/api/sleep-entries', async (req, res) => {
+  try {
+    const entries = await prisma.sleepEntry.findMany({
+      orderBy: {
+        date: 'desc'
       }
-    }
+    })
+    res.json(entries)
+  } catch (error) {
+    console.error('Error fetching sleep entries:', error)
+    res.status(500).json({ error: 'Failed to fetch sleep entries' })
   }
 })
 
-// 서버 시작 함수
-async function start() {
+// 새 수면 기록 생성
+app.post('/api/sleep-entries', async (req, res) => {
   try {
-    // CORS 설정
-    await fastify.register(cors, {
-      origin: env.CORS_ORIGIN,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      credentials: true
+    const entry = await prisma.sleepEntry.create({
+      data: {
+        date: req.body.date,
+        sleepTime: new Date(req.body.sleepTime),
+        wakeTime: new Date(req.body.wakeTime),
+        quality: req.body.quality,
+        note: req.body.note
+      }
     })
-
-    // 데이터베이스 마이그레이션 및 초기화
-    await runMigration()
-    await initializeDatabase()
-
-    // 서비스 및 컨텍스트 초기화
-    const db = await getDb()
-    const context: AppContext = {
-      userService: createUserService({ db })
-    }
-
-    // 라우트 등록
-    await fastify.register(createRoutes(context))
-
-    // API 라우트 등록
-    await fastify.register(sleepEntriesRoutes, { prefix: '/api' })
-
-    // 서버 시작
-    await fastify.listen({ port: env.PORT, host: env.HOST })
-
-    console.log(`서버가 http://${env.HOST}:${env.PORT} 에서 실행 중입니다.`)
+    res.status(201).json(entry)
   } catch (error) {
-    fastify.log.error(error)
-    process.exit(1)
+    console.error('Error creating sleep entry:', error)
+    res.status(500).json({ error: 'Failed to create sleep entry' })
   }
-}
+})
 
-// 서버 시작
-start()
+// 수면 기록 수정
+app.put('/api/sleep-entries/:id', async (req, res) => {
+  try {
+    const entry = await prisma.sleepEntry.update({
+      where: { id: parseInt(req.params.id) },
+      data: {
+        date: req.body.date,
+        sleepTime: new Date(req.body.sleepTime),
+        wakeTime: new Date(req.body.wakeTime),
+        quality: req.body.quality,
+        note: req.body.note
+      }
+    })
+    res.json(entry)
+  } catch (error) {
+    console.error('Error updating sleep entry:', error)
+    res.status(500).json({ error: 'Failed to update sleep entry' })
+  }
+})
+
+// 수면 기록 삭제
+app.delete('/api/sleep-entries/:id', async (req, res) => {
+  try {
+    await prisma.sleepEntry.delete({
+      where: { id: parseInt(req.params.id) }
+    })
+    res.status(204).send()
+  } catch (error) {
+    console.error('Error deleting sleep entry:', error)
+    res.status(500).json({ error: 'Failed to delete sleep entry' })
+  }
+})
+
+app.listen(port, () => {
+  console.log(`🚀 Server is running on port ${port}`)
+})

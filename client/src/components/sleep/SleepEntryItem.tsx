@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { differenceInMinutes } from 'date-fns'
 
 interface SleepEntryItemProps {
   id: number
@@ -35,9 +36,15 @@ export default function SleepEntryItem({
   const calculateDuration = (sleepTime: string, wakeTime: string) => {
     const sleep = new Date(sleepTime)
     const wake = new Date(wakeTime)
-    const diff = wake.getTime() - sleep.getTime()
-    const hours = Math.floor(diff / (1000 * 60 * 60))
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+
+    // 날짜가 바뀌는 경우를 처리
+    let diffMinutes = differenceInMinutes(wake, sleep)
+    if (diffMinutes < 0) {
+      diffMinutes += 24 * 60 // 24시간을 더해줌
+    }
+
+    const hours = Math.floor(diffMinutes / 60)
+    const minutes = diffMinutes % 60
     return `${hours}시간 ${minutes}분`
   }
 
