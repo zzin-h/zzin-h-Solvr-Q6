@@ -33,7 +33,23 @@ export default function SleepEntryForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSubmit(formData)
+
+    // 날짜와 시간을 ISO 문자열로 변환
+    const sleepDateTime = new Date(`${formData.date}T${formData.sleepTime}:00`)
+    const wakeDateTime = new Date(`${formData.date}T${formData.wakeTime}:00`)
+
+    // 만약 기상 시각이 취침 시각보다 이른 경우, 다음 날로 설정
+    if (wakeDateTime <= sleepDateTime) {
+      wakeDateTime.setDate(wakeDateTime.getDate() + 1)
+    }
+
+    const submissionData = {
+      ...formData,
+      sleepTime: sleepDateTime.toISOString(),
+      wakeTime: wakeDateTime.toISOString()
+    }
+
+    onSubmit(submissionData)
   }
 
   const handleChange = (
@@ -63,7 +79,7 @@ export default function SleepEntryForm({
       <div>
         <label className="block text-sm font-medium text-gray-700">취침 시각</label>
         <input
-          type="datetime-local"
+          type="time"
           name="sleepTime"
           value={formData.sleepTime}
           onChange={handleChange}
@@ -75,7 +91,7 @@ export default function SleepEntryForm({
       <div>
         <label className="block text-sm font-medium text-gray-700">기상 시각</label>
         <input
-          type="datetime-local"
+          type="time"
           name="wakeTime"
           value={formData.wakeTime}
           onChange={handleChange}
@@ -105,7 +121,7 @@ export default function SleepEntryForm({
         <label className="block text-sm font-medium text-gray-700">특이사항</label>
         <textarea
           name="note"
-          value={formData.note}
+          value={formData.note || ''}
           onChange={handleChange}
           rows={3}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
