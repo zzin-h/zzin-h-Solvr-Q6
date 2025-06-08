@@ -191,7 +191,7 @@ pnpm prisma migrate dev
 3. 더미 데이터 생성 스크립트 실행:
 
 ```bash
-pnpm prisma db seed
+pnpm prisma:seed
 ```
 
 생성되는 더미 데이터:
