@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 export interface SleepEntryFormData {
   date: string
@@ -15,21 +15,38 @@ interface SleepEntryFormProps {
   isSubmitting?: boolean
 }
 
+// ISO 문자열에서 시간만 추출하는 함수
+const formatTimeFromISO = (isoString: string) => {
+  const date = new Date(isoString)
+  return date.toTimeString().slice(0, 5) // "HH:mm" 형식으로 반환
+}
+
 export default function SleepEntryForm({
   initialData,
   onSubmit,
   onCancel,
   isSubmitting
 }: SleepEntryFormProps) {
-  const [formData, setFormData] = useState<SleepEntryFormData>(
-    initialData || {
-      date: new Date().toISOString().split('T')[0],
-      sleepTime: '',
-      wakeTime: '',
-      quality: 3,
-      note: ''
+  const [formData, setFormData] = useState<SleepEntryFormData>({
+    date: new Date().toISOString().split('T')[0],
+    sleepTime: '',
+    wakeTime: '',
+    quality: 3,
+    note: ''
+  })
+
+  // initialData가 변경될 때 폼 데이터 업데이트
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        date: initialData.date,
+        sleepTime: formatTimeFromISO(initialData.sleepTime),
+        wakeTime: formatTimeFromISO(initialData.wakeTime),
+        quality: initialData.quality,
+        note: initialData.note || ''
+      })
     }
-  )
+  }, [initialData])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
