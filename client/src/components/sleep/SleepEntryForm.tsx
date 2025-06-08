@@ -12,9 +12,15 @@ interface SleepEntryFormProps {
   initialData?: SleepEntryFormData
   onSubmit: (data: SleepEntryFormData) => void
   onCancel: () => void
+  isSubmitting?: boolean
 }
 
-export default function SleepEntryForm({ initialData, onSubmit, onCancel }: SleepEntryFormProps) {
+export default function SleepEntryForm({
+  initialData,
+  onSubmit,
+  onCancel,
+  isSubmitting
+}: SleepEntryFormProps) {
   const [formData, setFormData] = useState<SleepEntryFormData>(
     initialData || {
       date: new Date().toISOString().split('T')[0],
@@ -112,14 +118,16 @@ export default function SleepEntryForm({ initialData, onSubmit, onCancel }: Slee
           type="button"
           onClick={onCancel}
           className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          disabled={isSubmitting}
         >
           취소
         </button>
         <button
           type="submit"
-          className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={isSubmitting}
         >
-          저장
+          {isSubmitting ? '저장 중...' : '저장'}
         </button>
       </div>
     </form>

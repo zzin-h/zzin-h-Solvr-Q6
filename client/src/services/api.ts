@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { User, CreateUserDto, UpdateUserDto } from '../types/user'
+import type { SleepEntry, CreateSleepEntryDto, UpdateSleepEntryDto } from '../types/sleep'
 
 // API 응답 타입
 interface ApiResponse<T = any> {
@@ -57,6 +58,37 @@ export const healthService = {
   check: async (): Promise<{ status: string }> => {
     const response = await api.get<ApiResponse<{ status: string }>>('/health')
     return response.data.data || { status: 'unknown' }
+  }
+}
+
+export const sleepEntriesApi = {
+  // 목록 조회
+  getAll: async (): Promise<SleepEntry[]> => {
+    const response = await api.get('/sleep-entries')
+    return response.data
+  },
+
+  // 단일 항목 조회
+  getById: async (id: number): Promise<SleepEntry> => {
+    const response = await api.get(`/sleep-entries/${id}`)
+    return response.data
+  },
+
+  // 새 기록 생성
+  create: async (data: CreateSleepEntryDto): Promise<SleepEntry> => {
+    const response = await api.post('/sleep-entries', data)
+    return response.data
+  },
+
+  // 기록 수정
+  update: async (id: number, data: UpdateSleepEntryDto): Promise<SleepEntry> => {
+    const response = await api.put(`/sleep-entries/${id}`, data)
+    return response.data
+  },
+
+  // 기록 삭제
+  delete: async (id: number): Promise<void> => {
+    await api.delete(`/sleep-entries/${id}`)
   }
 }
 

@@ -1,15 +1,25 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import SleepEntryForm from '../components/sleep/SleepEntryForm'
 import type { SleepEntryFormData } from '../components/sleep/SleepEntryForm'
+import { sleepEntriesApi } from '../services/api'
 
 export default function NewSleepEntryPage() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
+
+  const createMutation = useMutation({
+    mutationFn: sleepEntriesApi.create,
+    onSuccess: () => {
+      // 생성 후 목록 갱신
+      queryClient.invalidateQueries({ queryKey: ['sleep-entries'] })
+      navigate('/sleep-entries')
+    }
+  })
 
   const handleSubmit = (data: SleepEntryFormData) => {
-    // TODO: API 연동 후 실제 저장 구현
-    console.log('Submit new entry:', data)
-    navigate('/sleep-entries')
+    createMutation.mutate(data)
   }
 
   const handleCancel = () => {
@@ -26,7 +36,14 @@ export default function NewSleepEntryPage() {
       </div>
 
       <div className="bg-white rounded-lg shadow p-6">
-        <SleepEntryForm onSubmit={handleSubmit} onCancel={handleCancel} />
+        <SleepEntryForm
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+          isSubmitting={createMutation.isPending}
+        />
+        {createMutation.isError && (
+          <div className="mt-4 text-red-600">저장 중 오류가 발생했습니다. 다시 시도해주세요.</div>
+        )}
       </div>
     </div>
   )

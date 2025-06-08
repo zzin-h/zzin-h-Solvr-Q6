@@ -1,33 +1,51 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import SleepEntryList from '../components/sleep/SleepEntryList'
-
-// 임시 데이터
-const MOCK_ENTRIES = [
-  {
-    id: 1,
-    date: '2024-03-20',
-    sleepTime: '2024-03-20T23:00:00',
-    wakeTime: '2024-03-21T07:00:00',
-    quality: 4,
-    note: '편안한 수면'
-  },
-  {
-    id: 2,
-    date: '2024-03-21',
-    sleepTime: '2024-03-21T23:30:00',
-    wakeTime: '2024-03-22T07:30:00',
-    quality: 3,
-    note: '중간에 한 번 깸'
-  }
-]
+import { sleepEntriesApi } from '../services/api'
 
 export default function SleepEntryListPage() {
-  const [entries] = useState(MOCK_ENTRIES)
+  const queryClient = useQueryClient()
+
+  // 수면 기록 목록 조회
+  const {
+    data: entries = [],
+    isLoading,
+    error
+  } = useQuery({
+    queryKey: ['sleep-entries'],
+    queryFn: sleepEntriesApi.getAll
+  })
+
+  // 수면 기록 삭제
+  const deleteMutation = useMutation({
+    mutationFn: sleepEntriesApi.delete,
+    onSuccess: () => {
+      // 삭제 후 목록 갱신
+      queryClient.invalidateQueries({ queryKey: ['sleep-entries'] })
+    }
+  })
 
   const handleDelete = (id: number) => {
-    // TODO: API 연동 후 실제 삭제 구현
-    console.log(`Delete entry ${id}`)
+    if (window.confirm('정말 삭제하시겠습니까?')) {
+      deleteMutation.mutate(id)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">로딩 중...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center text-red-600">데이터를 불러오는 중 오류가 발생했습니다.</div>
+      </div>
+    )
   }
 
   return (
