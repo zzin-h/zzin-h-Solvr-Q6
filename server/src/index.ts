@@ -1,13 +1,23 @@
 import express from 'express'
 import cors from 'cors'
 import { PrismaClient } from '@prisma/client'
+import sleepRouter from './routes/sleep'
 
 const app = express()
 const prisma = new PrismaClient()
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 8000
 
-app.use(cors())
+// CORS 설정
+app.use(
+  cors({
+    origin: ['http://localhost:3000', 'http://localhost:3001'],
+    credentials: true
+  })
+)
 app.use(express.json())
+
+// 라우터 연결
+app.use('/api/sleep-entries', sleepRouter)
 
 // 모든 수면 기록 조회
 app.get('/api/sleep-entries', async (req, res) => {
