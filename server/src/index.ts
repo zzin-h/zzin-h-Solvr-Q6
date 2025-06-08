@@ -6,6 +6,7 @@ import runMigration from './db/migrate'
 import { createUserService } from './services/userService'
 import { createRoutes } from './routes'
 import { AppContext } from './types/context'
+import sleepEntriesRoutes from './routes/sleep-entries'
 
 // Fastify 인스턴스 생성
 const fastify = Fastify({
@@ -43,6 +44,9 @@ async function start() {
 
     // 라우트 등록
     await fastify.register(createRoutes(context))
+
+    // API 라우트 등록
+    await fastify.register(sleepEntriesRoutes, { prefix: '/api' })
 
     // 서버 시작
     await fastify.listen({ port: env.PORT, host: env.HOST })
