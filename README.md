@@ -1,7 +1,13 @@
-# Deep Sleep – 수면 트래커
+# 수면 트래커
 
 일상의 수면 패턴을 기록하고 분석할 수 있는 웹 기반 수면 트래킹 서비스입니다.
 사용자는 매일의 수면 시간과 품질을 기록하고, 직관적인 차트를 통해 수면 패턴을 분석할 수 있습니다.
+
+## 0. 주요 페이지
+
+<img src="./images_for_readme/chart.png" width="500px" />
+<img src="./images_for_readme/list.png" width="500px" />
+<img src="./images_for_readme/input.png" width="500px" />
 
 ## 1. 주요 기능
 
@@ -117,14 +123,14 @@ interface SleepEntry {
 
 ```bash
 # 프로젝트 클론
-git clone [repository-url]
-cd [project-directory]
+git clone https://github.com/zzin-h/zzin-h-Solvr-Q6.git
+cd zzin-h-Solvr-Q6
 
 # 의존성 설치
-npm install
+pnpm install
 
 # 개발 서버 실행
-npm run dev
+pnpm dev
 ```
 
 ### 6.2 환경 변수
@@ -132,23 +138,3 @@ npm run dev
 ```env
 VITE_API_URL=http://localhost:3000
 ```
-
-## 7. 향후 개선 계획
-
-### 7.1 기능 개선
-
-- [ ] 사용자 인증 시스템 구현
-- [ ] 수면 목표 설정 및 알림
-- [ ] 수면 통계 리포트 생성
-- [ ] 다크 모드 지원
-
-### 7.2 기술적 개선
-
-- [ ] 테스트 코드 작성 (Jest, React Testing Library)
-- [ ] PWA 지원
-- [ ] 성능 최적화
-- [ ] CI/CD 파이프라인 구축
-
-## 8. 라이선스
-
-MIT License
