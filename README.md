@@ -2,12 +2,14 @@
 
 일상의 수면 패턴을 기록하고 분석할 수 있는 웹 기반 수면 트래킹 서비스입니다.
 사용자는 매일의 수면 시간과 품질을 기록하고, 직관적인 차트를 통해 수면 패턴을 분석할 수 있습니다.
+또한 Google의 Gemini AI를 활용하여 수면 패턴에 대한 전문적인 분석과 개선 조언을 받을 수 있습니다.
 
 ## 0. 주요 페이지
 
 <img src="./images_for_readme/chart.png" width="500px" />
 <img src="./images_for_readme/list.png" width="500px" />
 <img src="./images_for_readme/input.png" width="500px" />
+<img src="./images_for_readme/Ai.png" width="500px" />
 
 ## 1. 주요 기능
 
@@ -23,6 +25,13 @@
 - 취침/기상 시간 패턴 차트
 - 일별 수면 시간 차트
 - 수면 품질 추이 및 7일 이동평균 차트
+
+### 1.3 AI 기반 수면 분석
+
+- Google Gemini AI를 활용한 전문적인 수면 패턴 분석
+- 기간별(7일/14일/30일) 수면 데이터 분석
+- 수면 패턴의 문제점 파악 및 개선 조언
+- 수면 품질 향상을 위한 맞춤형 제안
 
 ## 2. 기술 스택
 
@@ -42,6 +51,7 @@
 - **프레임워크**: Express
 - **데이터베이스**: SQLite
 - **ORM**: Prisma
+- **AI 서비스**: Google Gemini AI
 - **API**: RESTful API
 
 ## 3. 프로젝트 구조
@@ -68,6 +78,7 @@ client/
 - **ChartDashboard**: 수면 분석 차트 대시보드
 - **SleepEntryList**: 수면 기록 목록
 - **SleepEntryForm**: 수면 기록 입력/수정 폼
+- **SleepAnalysis**: AI 기반 수면 분석 컴포넌트
 
 ## 4. API 구조
 
@@ -80,6 +91,9 @@ POST   /api/sleep-entries     // 새 수면 기록 생성
 GET    /api/sleep-entries/:id // 특정 수면 기록 조회
 PUT    /api/sleep-entries/:id // 수면 기록 수정
 DELETE /api/sleep-entries/:id // 수면 기록 삭제
+
+// AI 분석 API
+GET    /api/sleep-entries/ai/:days // AI 기반 수면 분석 (7/14/30일)
 ```
 
 ### 4.2 데이터 모델
@@ -94,6 +108,11 @@ interface SleepEntry {
   note?: string
   createdAt: string // ISO 8601
   updatedAt: string // ISO 8601
+}
+
+interface AIAnalysis {
+  sleepData: SleepEntry[]
+  analysis: string // AI가 생성한 분석 결과
 }
 ```
 
@@ -111,7 +130,17 @@ interface SleepEntry {
 - 낙관적 업데이트를 통한 UX 개선
 - 데이터 캐싱 및 자동 갱신
 
-### 5.3 반응형 디자인
+### 5.3 AI 분석 기능
+
+- Google Gemini AI 모델 통합
+- 수면 데이터 전처리 및 포맷팅
+- 상세한 분석 리포트 생성
+  - 수면 시간 패턴 분석
+  - 수면 품질 분석
+  - 문제점 파악
+  - 개선을 위한 조언
+
+### 5.4 반응형 디자인
 
 - TailwindCSS를 활용한 모바일 퍼스트 디자인
 - 다양한 화면 크기 지원
@@ -136,7 +165,11 @@ pnpm dev
 ### 6.2 환경 변수
 
 ```env
+# 클라이언트 환경 변수
 VITE_API_URL=http://localhost:3000
+
+# 서버 환경 변수
+GEMINI_API_KEY=your_gemini_api_key_here  # Google Gemini AI API 키
 ```
 
 ### 6.3 더미 데이터 생성
