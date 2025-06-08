@@ -1,16 +1,17 @@
 import React from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import Layout from './components/layout/Layout'
 import SleepEntryListPage from './pages/SleepEntryListPage'
 import NewSleepEntryPage from './pages/NewSleepEntryPage'
 import EditSleepEntryPage from './pages/EditSleepEntryPage'
+import ChartDashboardPage from './pages/ChartDashboardPage'
 
 function App() {
   return (
     <Layout>
       <Routes>
-        {/* 루트 경로를 수면 기록 목록으로 리다이렉트 */}
-        <Route path="/" element={<Navigate to="/sleep-entries" replace />} />
+        {/* 루트 경로에 차트 대시보드 표시 */}
+        <Route path="/" element={<ChartDashboardPage />} />
 
         {/* 수면 기록 관련 라우트 */}
         <Route path="/sleep-entries" element={<SleepEntryListPage />} />

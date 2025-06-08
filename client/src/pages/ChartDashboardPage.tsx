@@ -1,13 +1,12 @@
 import React from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import SleepEntryList from '../components/sleep/SleepEntryList'
+import SleepScheduleChart from '../components/charts/SleepScheduleChart'
+import SleepDurationChart from '../components/charts/SleepDurationChart'
+import SleepQualityChart from '../components/charts/SleepQualityChart'
 import { sleepEntriesApi } from '../services/api'
 
-export default function SleepEntryListPage() {
-  const queryClient = useQueryClient()
-
-  // 수면 기록 목록 조회
+export default function ChartDashboardPage() {
   const {
     data: entries = [],
     isLoading,
@@ -16,21 +15,6 @@ export default function SleepEntryListPage() {
     queryKey: ['sleep-entries'],
     queryFn: sleepEntriesApi.getAll
   })
-
-  // 수면 기록 삭제
-  const deleteMutation = useMutation({
-    mutationFn: sleepEntriesApi.delete,
-    onSuccess: () => {
-      // 삭제 후 목록 갱신
-      queryClient.invalidateQueries({ queryKey: ['sleep-entries'] })
-    }
-  })
-
-  const handleDelete = (id: number) => {
-    if (window.confirm('정말 삭제하시겠습니까?')) {
-      deleteMutation.mutate(id)
-    }
-  }
 
   if (isLoading) {
     return (
@@ -51,10 +35,10 @@ export default function SleepEntryListPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">수면 기록 목록</h1>
+        <h1 className="text-2xl font-bold">수면 분석 대시보드</h1>
         <div className="space-x-4">
-          <Link to="/" className="text-indigo-600 hover:text-indigo-800">
-            대시보드
+          <Link to="/sleep-entries" className="text-indigo-600 hover:text-indigo-800">
+            수면 기록 목록
           </Link>
           <Link
             to="/sleep-entries/new"
@@ -106,7 +90,13 @@ export default function SleepEntryListPage() {
           </div>
         </div>
       ) : (
-        <SleepEntryList entries={entries} onDelete={handleDelete} />
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <SleepScheduleChart entries={entries} />
+            <SleepDurationChart entries={entries} />
+          </div>
+          <SleepQualityChart entries={entries} />
+        </div>
       )}
     </div>
   )
