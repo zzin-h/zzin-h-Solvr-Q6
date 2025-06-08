@@ -1,26 +1,24 @@
-import { Routes, Route } from 'react-router-dom'
-import MainLayout from './layouts/MainLayout'
-import HomePage from './routes/HomePage'
-import UsersPage from './routes/UsersPage'
-import UserDetailPage from './routes/UserDetailPage'
-import CreateUserPage from './routes/CreateUserPage'
-import EditUserPage from './routes/EditUserPage'
-import NotFoundPage from './routes/NotFoundPage'
+import React from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import SleepEntryListPage from './pages/SleepEntryListPage'
+import NewSleepEntryPage from './pages/NewSleepEntryPage'
+import EditSleepEntryPage from './pages/EditSleepEntryPage'
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<MainLayout />}>
-        <Route index element={<HomePage />} />
-        <Route path="users">
-          <Route index element={<UsersPage />} />
-          <Route path="new" element={<CreateUserPage />} />
-          <Route path=":id" element={<UserDetailPage />} />
-          <Route path=":id/edit" element={<EditUserPage />} />
-        </Route>
-        <Route path="*" element={<NotFoundPage />} />
-      </Route>
-    </Routes>
+    <BrowserRouter>
+      <div className="min-h-screen bg-gray-50">
+        <Routes>
+          {/* 루트 경로를 수면 기록 목록으로 리다이렉트 */}
+          <Route path="/" element={<Navigate to="/sleep-entries" replace />} />
+
+          {/* 수면 기록 관련 라우트 */}
+          <Route path="/sleep-entries" element={<SleepEntryListPage />} />
+          <Route path="/sleep-entries/new" element={<NewSleepEntryPage />} />
+          <Route path="/sleep-entries/:id/edit" element={<EditSleepEntryPage />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   )
 }
 
