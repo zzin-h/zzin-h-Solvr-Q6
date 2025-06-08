@@ -1,85 +1,154 @@
-# 풀스택 서비스 보일러 플레이트
+# Deep Sleep – 수면 트래커
 
-## 프로젝트 개요
+일상의 수면 패턴을 기록하고 분석할 수 있는 웹 기반 수면 트래킹 서비스입니다.
+사용자는 매일의 수면 시간과 품질을 기록하고, 직관적인 차트를 통해 수면 패턴을 분석할 수 있습니다.
 
-이 보일러 플레이트는 풀스택 웹 애플리케이션 개발을 위한 기본 구조를 제공합니다. monorepo 구조로 클라이언트와 서버를 효율적으로 관리하며, 현대적인 웹 개발 기술 스택을 활용합니다.
+## 1. 주요 기능
 
-## 기술 스택
+### 1.1 수면 기록 관리
 
-### 공통
+- 날짜별 수면 시간(취침/기상) 기록
+- 수면 품질 평가(1-5점)
+- 특이사항 메모 기능
+- 기록 수정 및 삭제
 
-- 패키지 매니저: pnpm (workspace 기능 활용)
-- 언어: TypeScript
-- Node.js 버전: 22.x
-- 테스트: Vitest
-- 코드 품질: Prettier
+### 1.2 수면 패턴 분석
 
-### 클라이언트
+- 취침/기상 시간 패턴 차트
+- 일별 수면 시간 차트
+- 수면 품질 추이 및 7일 이동평균 차트
 
-- 프레임워크: React
-- 빌드 도구: Vite
-- 라우팅: React Router
-- 스타일링: TailwindCSS
+## 2. 기술 스택
 
-### 서버
+### 2.1 프론트엔드
 
-- 프레임워크: Fastify
-- 데이터베이스: SQLite with DirzzleORM
+- **핵심**: React, TypeScript, Vite
+- **라우팅**: React Router v6
+- **상태관리**: React Query v5
+- **스타일링**: TailwindCSS
+- **차트**: Chart.js, react-chartjs-2
+- **HTTP 클라이언트**: Axios
+- **날짜/시간**: date-fns
 
-## 설치 및 실행
+### 2.2 백엔드
 
-### 초기 설치
+- **런타임**: Node.js
+- **프레임워크**: Express
+- **데이터베이스**: SQLite
+- **ORM**: Prisma
+- **API**: RESTful API
 
-```bash
-# 프로젝트 루트 디렉토리에서 실행
-pnpm install
+## 3. 프로젝트 구조
+
+### 3.1 클라이언트 구조
+
+```
+client/
+├── src/
+│   ├── components/
+│   │   ├── charts/           # 차트 컴포넌트
+│   │   ├── layout/           # 레이아웃 컴포넌트
+│   │   └── sleep/           # 수면 기록 관련 컴포넌트
+│   ├── pages/               # 페이지 컴포넌트
+│   ├── services/            # API 서비스
+│   └── types/              # 타입 정의
+├── package.json
+└── vite.config.ts
 ```
 
-### 개발 서버 실행
+### 3.2 주요 컴포넌트
 
-```bash
-# 클라이언트 및 서버 동시 실행
-pnpm dev
+- **Layout**: 전체 레이아웃 및 네비게이션
+- **ChartDashboard**: 수면 분석 차트 대시보드
+- **SleepEntryList**: 수면 기록 목록
+- **SleepEntryForm**: 수면 기록 입력/수정 폼
 
-# 클라이언트만 실행
-pnpm dev:client
+## 4. API 구조
 
-# 서버만 실행
-pnpm dev:server
+### 4.1 엔드포인트
+
+```typescript
+// 수면 기록 관리 API
+GET    /api/sleep-entries     // 전체 수면 기록 조회
+POST   /api/sleep-entries     // 새 수면 기록 생성
+GET    /api/sleep-entries/:id // 특정 수면 기록 조회
+PUT    /api/sleep-entries/:id // 수면 기록 수정
+DELETE /api/sleep-entries/:id // 수면 기록 삭제
 ```
 
-### 테스트 실행
+### 4.2 데이터 모델
 
-```bash
-# 클라이언트 테스트
-pnpm test:client
-
-# 서버 테스트
-pnpm test:server
-
-# 모든 테스트 실행
-pnpm test
+```typescript
+interface SleepEntry {
+  id: number
+  date: string // YYYY-MM-DD
+  sleepTime: string // ISO 8601
+  wakeTime: string // ISO 8601
+  quality: number // 1-5
+  note?: string
+  createdAt: string // ISO 8601
+  updatedAt: string // ISO 8601
+}
 ```
 
-### 빌드
+## 5. 주요 기능 구현
+
+### 5.1 차트 구현
+
+- **SleepScheduleChart**: 취침/기상 시간 패턴 시각화
+- **SleepDurationChart**: 일별 수면 시간 막대 차트
+- **SleepQualityChart**: 수면 품질 추이와 7일 이동평균
+
+### 5.2 상태 관리
+
+- React Query를 사용한 서버 상태 관리
+- 낙관적 업데이트를 통한 UX 개선
+- 데이터 캐싱 및 자동 갱신
+
+### 5.3 반응형 디자인
+
+- TailwindCSS를 활용한 모바일 퍼스트 디자인
+- 다양한 화면 크기 지원
+- 직관적인 UI/UX
+
+## 6. 실행 방법
+
+### 6.1 개발 환경 설정
 
 ```bash
-# 클라이언트 및 서버 빌드
-pnpm build
+# 프로젝트 클론
+git clone [repository-url]
+cd [project-directory]
+
+# 의존성 설치
+npm install
+
+# 개발 서버 실행
+npm run dev
 ```
 
-## 환경 변수 설정
+### 6.2 환경 변수
 
-- 클라이언트: `client/.env` 파일에 설정 (예시는 `client/.env.example` 참조)
-- 서버: `server/.env` 파일에 설정 (예시는 `server/.env.example` 참조)
+```env
+VITE_API_URL=http://localhost:3000
+```
 
-## API 엔드포인트
+## 7. 향후 개선 계획
 
-서버는 다음과 같은 기본 API 엔드포인트를 제공합니다:
+### 7.1 기능 개선
 
-- `GET /api/health`: 서버 상태 확인
-- `GET /api/users`: 유저 목록 조회
-- `GET /api/users/:id`: 특정 유저 조회
-- `POST /api/users`: 새 유저 추가
-- `PUT /api/users/:id`: 유저 정보 수정
-- `DELETE /api/users/:id`: 유저 삭제
+- [ ] 사용자 인증 시스템 구현
+- [ ] 수면 목표 설정 및 알림
+- [ ] 수면 통계 리포트 생성
+- [ ] 다크 모드 지원
+
+### 7.2 기술적 개선
+
+- [ ] 테스트 코드 작성 (Jest, React Testing Library)
+- [ ] PWA 지원
+- [ ] 성능 최적화
+- [ ] CI/CD 파이프라인 구축
+
+## 8. 라이선스
+
+MIT License
