@@ -69,6 +69,22 @@ async function runMigration() {
       )
     `)
 
+    // sleep_entries 테이블 생성
+    sqlite.exec(`
+      CREATE TABLE IF NOT EXISTS sleep_entries (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        date TEXT NOT NULL,
+        sleep_time TEXT NOT NULL,
+        wake_time TEXT NOT NULL,
+        quality INTEGER NOT NULL,
+        note TEXT,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      )
+    `)
+
     // 초기 데이터 삽입
     console.log('초기 데이터 삽입 중...')
 
