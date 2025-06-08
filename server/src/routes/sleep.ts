@@ -20,7 +20,7 @@ if (!GEMINI_API_KEY) {
 
 // Gemini AI 초기화
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
-const model = genAI.getGenerativeModel({ model: 'gemini-pro' })
+const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-preview-05-20' })
 
 // AI 분석 엔드포인트
 router.get('/ai/:days', async (req, res) => {
@@ -49,29 +49,21 @@ router.get('/ai/:days', async (req, res) => {
     }
 
     // AI 분석을 위한 데이터 포맷팅
-    const analysisData = sleepEntries.map(
-      (entry: {
-        date: string
-        sleepTime: Date
-        wakeTime: Date
-        quality: number
-        note: string | null
-      }) => ({
-        date: entry.date,
-        sleepTime: new Date(entry.sleepTime).toLocaleTimeString('ko-KR', {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false
-        }),
-        wakeTime: new Date(entry.wakeTime).toLocaleTimeString('ko-KR', {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false
-        }),
-        quality: entry.quality,
-        note: entry.note
-      })
-    )
+    const analysisData = sleepEntries.map(entry => ({
+      date: entry.date,
+      sleepTime: new Date(entry.sleepTime).toLocaleTimeString('ko-KR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }),
+      wakeTime: new Date(entry.wakeTime).toLocaleTimeString('ko-KR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }),
+      quality: entry.quality,
+      note: entry.note
+    }))
 
     console.log('AI 분석 데이터 준비됨:', JSON.stringify(analysisData, null, 2))
 
