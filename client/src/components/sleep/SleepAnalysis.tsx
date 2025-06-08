@@ -19,7 +19,7 @@ export default function SleepAnalysis() {
   const { data: analysisData, isLoading } = useQuery<AnalysisResponse>({
     queryKey: ['sleepAnalysis', selectedDays],
     queryFn: async () => {
-      const response = await axios.get(`/api/sleep-entries/analysis/${selectedDays}`)
+      const response = await axios.get(`/ai/${selectedDays}`)
       return response.data
     }
   })

@@ -8,6 +8,7 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation()
   const isListView = location.pathname === '/sleep-entries'
+  const isAiView = location.pathname === '/ai'
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -22,7 +23,7 @@ export default function Layout({ children }: LayoutProps) {
                 <Link
                   to="/"
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150 ${
-                    !isListView
+                    !isListView && !isAiView
                       ? 'bg-white text-gray-900 shadow-sm'
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
@@ -38,6 +39,32 @@ export default function Layout({ children }: LayoutProps) {
                   }`}
                 >
                   기록 목록
+                </Link>
+                <Link
+                  to="/ai"
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150 ${
+                    isAiView
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  <span className="inline-flex items-center">
+                    <svg
+                      className="w-4 h-4 mr-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 10V3L4 14h7v7l9-11h-7z"
+                      />
+                    </svg>
+                    AI 분석
+                  </span>
                 </Link>
               </div>
             </div>
